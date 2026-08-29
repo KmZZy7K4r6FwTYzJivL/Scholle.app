@@ -1,0 +1,249 @@
+:root {
+  --wine: #7a1f2b;
+  --wine-dark: #5a1620;
+  --wine-light: #a8384a;
+  --gold: #d4a437;
+  --cream: #fdf8f0;
+  --ink: #2b1a12;
+  --muted: #8a7a6d;
+  --card-bg: #ffffff;
+  --danger: #b3382c;
+  --radius: 16px;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(180deg, var(--wine) 0%, var(--wine-dark) 220px, var(--cream) 220px);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: env(safe-area-inset-top, 20px) 16px calc(env(safe-area-inset-bottom, 20px) + 24px);
+}
+
+.header {
+  text-align: center;
+  padding: 20px 0 12px;
+  color: #fff;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.8);
+  letter-spacing: 0.02em;
+}
+
+.counter-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(90, 22, 32, 0.18);
+  margin-top: 8px;
+}
+
+.count-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+#count {
+  font-size: 4.5rem;
+  font-weight: 800;
+  color: var(--wine);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.count-label {
+  font-size: 0.95rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+}
+
+.btn-add {
+  width: 100%;
+  padding: 20px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(180deg, var(--wine-light), var(--wine));
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 6px 16px rgba(122, 31, 43, 0.35);
+  cursor: pointer;
+  transition: transform 0.08s ease;
+  touch-action: manipulation;
+}
+
+.btn-add:active {
+  transform: scale(0.96);
+}
+
+.secondary-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn-secondary {
+  flex: 1;
+  padding: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--wine-dark);
+  background: var(--cream);
+  border: 1px solid #e7d9c9;
+  border-radius: 999px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.btn-secondary:active {
+  transform: scale(0.97);
+}
+
+.btn-danger {
+  color: var(--danger);
+}
+
+.stats-card, .settings-card, .history-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  margin-top: 16px;
+  box-shadow: 0 4px 16px rgba(90, 22, 32, 0.08);
+}
+
+.stats-card {
+  display: flex;
+  padding: 16px 8px;
+}
+
+.stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 4px;
+  border-right: 1px solid #f0e6d9;
+}
+
+.stat:last-child {
+  border-right: none;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--wine);
+}
+
+.stat-name {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.settings-card {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-card label {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+#priceInput {
+  width: 90px;
+  padding: 8px 10px;
+  font-size: 1rem;
+  border: 1px solid #e7d9c9;
+  border-radius: 10px;
+  text-align: right;
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.history-card {
+  padding: 16px 18px 8px;
+}
+
+.history-card h2 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  color: var(--wine-dark);
+}
+
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.history-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0e6d9;
+  font-size: 0.92rem;
+}
+
+.history-list li:last-child {
+  border-bottom: none;
+}
+
+.history-index {
+  color: var(--gold);
+  font-weight: 700;
+  margin-right: 8px;
+}
+
+.history-time {
+  color: var(--muted);
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.9rem;
+  padding: 20px 0;
+}
+
+.day-divider {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 12px 0 4px;
+}

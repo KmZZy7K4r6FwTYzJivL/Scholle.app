@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Schorle Teller</title>
+<meta name="description" content="Houd je Schorles bij op de Bad Dürkheim Wurstmarkt">
+<meta name="theme-color" content="#7a1f2b">
+
+<!-- PWA / Android -->
+<link rel="manifest" href="manifest.json">
+
+<!-- iOS PWA support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Schorle">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <header class="header">
+    <h1>🍷 Schorle Teller</h1>
+    <p class="subtitle">Bad Dürkheim Wurstmarkt</p>
+  </header>
+
+  <main class="counter-card">
+    <div class="count-display">
+      <span id="count">0</span>
+      <span class="count-label">Schorles</span>
+    </div>
+
+    <button id="addBtn" class="btn-add" aria-label="Schorle toevoegen">
+      + Schorle
+    </button>
+
+    <div class="secondary-actions">
+      <button id="undoBtn" class="btn-secondary">↺ Undo</button>
+      <button id="resetBtn" class="btn-secondary btn-danger">Reset</button>
+    </div>
+  </main>
+
+  <section class="stats-card">
+    <div class="stat">
+      <span class="stat-value" id="todayCount">0</span>
+      <span class="stat-name">Vandaag</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value" id="totalCost">€0,00</span>
+      <span class="stat-name">Totaal uitgegeven</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value" id="lastTime">–</span>
+      <span class="stat-name">Laatste</span>
+    </div>
+  </section>
+
+  <section class="settings-card">
+    <label for="priceInput">Prijs per Schorle (€)</label>
+    <input type="number" id="priceInput" min="0" step="0.10" inputmode="decimal">
+  </section>
+
+  <section class="history-card">
+    <h2>Geschiedenis</h2>
+    <ul id="historyList" class="history-list"></ul>
+    <p id="emptyState" class="empty-state">Nog geen Schorles gelogd. Proost! 🥂</p>
+  </section>
+
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
