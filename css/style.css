@@ -247,3 +247,140 @@ html, body {
   letter-spacing: 0.06em;
   padding: 12px 0 4px;
 }
+
+.group-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  margin-top: 16px;
+  box-shadow: 0 4px 16px rgba(90, 22, 32, 0.08);
+  padding: 18px 20px;
+}
+
+.group-card h2 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  color: var(--wine-dark);
+}
+
+.group-hint {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.group-toggle {
+  display: flex;
+  gap: 10px;
+}
+
+.group-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.group-form input {
+  padding: 12px;
+  font-size: 0.95rem;
+  border: 1px solid #e7d9c9;
+  border-radius: 10px;
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.btn-small {
+  padding: 12px;
+  font-size: 1rem;
+  margin-top: 2px;
+}
+
+.group-error {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  color: var(--danger);
+  background: #fbe9e6;
+  border-radius: 8px;
+}
+
+.group-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.group-code {
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.group-code strong {
+  color: var(--wine);
+  letter-spacing: 0.08em;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.85rem;
+  color: var(--wine);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link-danger {
+  color: var(--danger);
+  white-space: nowrap;
+}
+
+.standings-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.standing-row {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid #f0e6d9;
+  font-size: 0.92rem;
+}
+
+.standing-row:last-child {
+  border-bottom: none;
+}
+
+.standing-rank {
+  color: var(--gold);
+  font-weight: 700;
+  text-align: center;
+}
+
+.standing-name {
+  color: var(--ink);
+}
+
+.standing-count {
+  font-weight: 700;
+  color: var(--wine);
+}
+
+.standing-me {
+  background: #fdf3e7;
+  border-radius: 8px;
+  padding-left: 6px;
+  padding-right: 6px;
+  margin: 0 -6px;
+}
+
+.standing-me .standing-name {
+  font-weight: 700;
+}
