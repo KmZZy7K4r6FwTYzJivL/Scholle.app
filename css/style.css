@@ -191,9 +191,10 @@ html, body {
 
 .btn-secondary {
   flex: 1;
-  padding: 12px;
-  font-size: 0.95rem;
+  padding: 12px 8px;
+  font-size: 0.85rem;
   font-weight: 600;
+  white-space: nowrap;
   color: var(--wine-dark);
   background: var(--cream);
   border: 1px solid #e7d9c9;
@@ -210,7 +211,7 @@ html, body {
   color: var(--danger);
 }
 
-.stats-card, .settings-card, .history-card {
+.stats-card, .history-card {
   background: var(--card-bg);
   border-radius: var(--radius);
   margin-top: 16px;
@@ -248,29 +249,6 @@ html, body {
   margin-top: 2px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-}
-
-.settings-card {
-  padding: 14px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.settings-card label {
-  font-size: 0.9rem;
-  color: var(--muted);
-}
-
-#priceInput {
-  width: 90px;
-  padding: 8px 10px;
-  font-size: 1rem;
-  border: 1px solid #e7d9c9;
-  border-radius: 10px;
-  text-align: right;
-  background: var(--cream);
-  color: var(--ink);
 }
 
 .history-card {

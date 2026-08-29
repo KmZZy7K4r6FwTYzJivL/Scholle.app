@@ -1,14 +1,11 @@
 (() => {
   const STORAGE_KEY = 'schorle-entries';
-  const PRICE_KEY = 'schorle-price';
 
   const countEl = document.getElementById('count');
   const todayCountEl = document.getElementById('todayCount');
-  const totalCostEl = document.getElementById('totalCost');
   const lastTimeEl = document.getElementById('lastTime');
   const historyListEl = document.getElementById('historyList');
   const emptyStateEl = document.getElementById('emptyState');
-  const priceInput = document.getElementById('priceInput');
   const addBtn = document.getElementById('addBtn');
   const undoBtn = document.getElementById('undoBtn');
   const resetBtn = document.getElementById('resetBtn');
@@ -33,10 +30,7 @@
   const groupCardEl = document.getElementById('groupCard');
 
   let entries = loadEntries();
-  let price = loadPrice();
   let busy = false;
-
-  priceInput.value = price.toFixed(2);
 
   function loadEntries() {
     try {
@@ -49,16 +43,6 @@
 
   function saveEntries() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-  }
-
-  function loadPrice() {
-    const raw = localStorage.getItem(PRICE_KEY);
-    const val = raw ? parseFloat(raw) : 4.5;
-    return Number.isFinite(val) ? val : 4.5;
-  }
-
-  function savePrice() {
-    localStorage.setItem(PRICE_KEY, String(price));
   }
 
   function isSameDay(a, b) {
@@ -75,10 +59,6 @@
     return new Date(ts).toLocaleDateString(I18n.locale(), { weekday: 'long', day: 'numeric', month: 'long' });
   }
 
-  function formatEuro(value) {
-    return new Intl.NumberFormat(I18n.locale(), { style: 'currency', currency: 'EUR' }).format(value);
-  }
-
   function currentEntries() {
     return Group.isActive() ? Group.getMyEntries() : entries;
   }
@@ -90,8 +70,6 @@
     const now = new Date();
     const todayCount = active.filter(ts => isSameDay(new Date(ts), now)).length;
     todayCountEl.textContent = todayCount;
-
-    totalCostEl.textContent = formatEuro(active.length * price);
 
     const last = active[active.length - 1];
     lastTimeEl.textContent = last ? formatTime(last) : '–';
@@ -226,14 +204,6 @@
     }
     render();
   }));
-
-  priceInput.addEventListener('change', () => {
-    const val = parseFloat(priceInput.value);
-    price = Number.isFinite(val) && val >= 0 ? val : 0;
-    priceInput.value = price.toFixed(2);
-    savePrice();
-    render();
-  });
 
   // --- Groep UI ---
 

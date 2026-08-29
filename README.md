@@ -7,7 +7,6 @@ Een simpele, mobielvriendelijke web-app om bij te houden hoeveel Schorles je dri
 - Eén grote knop om een Schorle te loggen (met timestamp)
 - Undo en reset
 - Overzicht: totaal, aantal vandaag, laatste Schorle
-- Prijs per Schorle instelbaar → totaal uitgegeven bedrag
 - Geschiedenis gegroepeerd per dag
 - Werkt volledig offline (PWA) en is te installeren op het beginscherm van zowel **Android** als **iOS**
 - Solo-gebruik werkt zonder backend of account — alles lokaal op je telefoon (`localStorage`)
