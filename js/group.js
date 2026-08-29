@@ -69,7 +69,7 @@ const Group = (() => {
 
   async function create(groupName, memberName) {
     const supabase = getClient();
-    if (!supabase) throw new Error('Groepen zijn niet ingesteld voor deze app.');
+    if (!supabase) throw new Error(I18n.t('errorGroupsNotConfigured'));
 
     let group = null;
     let lastError = null;
@@ -88,7 +88,7 @@ const Group = (() => {
         throw error;
       }
     }
-    if (!group) throw lastError || new Error('Kon geen unieke groepscode genereren.');
+    if (!group) throw lastError || new Error(I18n.t('errorNoUniqueCode'));
 
     const { data: member, error: memberError } = await supabase
       .from('members')
@@ -112,7 +112,7 @@ const Group = (() => {
 
   async function join(code, memberName) {
     const supabase = getClient();
-    if (!supabase) throw new Error('Groepen zijn niet ingesteld voor deze app.');
+    if (!supabase) throw new Error(I18n.t('errorGroupsNotConfigured'));
 
     const normalizedCode = code.trim().toUpperCase();
     const { data: group, error: groupError } = await supabase
@@ -121,7 +121,7 @@ const Group = (() => {
       .eq('code', normalizedCode)
       .maybeSingle();
     if (groupError) throw groupError;
-    if (!group) throw new Error('Geen groep gevonden met deze code.');
+    if (!group) throw new Error(I18n.t('errorNoGroupCode'));
 
     const { data: member, error: memberError } = await supabase
       .from('members')

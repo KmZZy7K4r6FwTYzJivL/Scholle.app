@@ -12,6 +12,7 @@ Een simpele, mobielvriendelijke web-app om bij te houden hoeveel Schorles je dri
 - Werkt volledig offline (PWA) en is te installeren op het beginscherm van zowel **Android** als **iOS**
 - Solo-gebruik werkt zonder backend of account — alles lokaal op je telefoon (`localStorage`)
 - **Groepen:** maak een groep aan, deel de code of link, en zie de live tussenstand van iedereen die meedoet (vereist eenmalige Supabase-koppeling, zie hieronder)
+- **Meertalig:** Nederlands, Engels en Duits, te wisselen met de NL/EN/DE-knoppen rechtsboven (onthoudt je keuze, start standaard op de taal van je telefoon)
 
 ## Gebruiken
 
@@ -55,6 +56,7 @@ index.html               – de pagina
 css/style.css             – styling
 js/app.js                 – telling, opslag, weergave (solo + groep)
 js/group.js                – groep aanmaken/joinen, tussenstand, live updates
+js/i18n.js                  – vertalingen NL/EN/DE en taalwissel
 js/supabase-config.js      – jouw Supabase-projectgegevens (zie boven)
 manifest.json              – PWA-manifest (Android)
 sw.js                      – service worker (offline gebruik)

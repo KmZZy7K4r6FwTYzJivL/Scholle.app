@@ -68,15 +68,15 @@
   }
 
   function formatTime(ts) {
-    return new Date(ts).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+    return new Date(ts).toLocaleTimeString(I18n.locale(), { hour: '2-digit', minute: '2-digit' });
   }
 
   function formatDay(ts) {
-    return new Date(ts).toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' });
+    return new Date(ts).toLocaleDateString(I18n.locale(), { weekday: 'long', day: 'numeric', month: 'long' });
   }
 
   function formatEuro(value) {
-    return '€' + value.toFixed(2).replace('.', ',');
+    return new Intl.NumberFormat(I18n.locale(), { style: 'currency', currency: 'EUR' }).format(value);
   }
 
   function currentEntries() {
@@ -157,7 +157,7 @@
       li.className = 'standing-row' + (row.isMe ? ' standing-me' : '');
       li.innerHTML = `
         <span class="standing-rank">${i + 1}</span>
-        <span class="standing-name">${escapeHtml(row.name)}${row.isMe ? ' (jij)' : ''}</span>
+        <span class="standing-name">${escapeHtml(row.name)}${row.isMe ? I18n.t('youSuffix') : ''}</span>
         <span class="standing-count">${row.count}</span>`;
       standingsListEl.appendChild(li);
     });
@@ -186,7 +186,7 @@
       await fn();
     } catch (e) {
       console.error(e);
-      alert('Er ging iets mis: ' + (e && e.message ? e.message : 'onbekende fout') + '. Controleer je internetverbinding en probeer opnieuw.');
+      alert(I18n.t('errorGeneric', { msg: (e && e.message) || '?' }));
     } finally {
       busy = false;
       addBtn.disabled = false;
@@ -217,7 +217,7 @@
 
   resetBtn.addEventListener('click', () => withBusy(async () => {
     if (currentEntries().length === 0) return;
-    if (!confirm('Weet je zeker dat je jouw teller wilt resetten? Dit kan niet ongedaan gemaakt worden.')) return;
+    if (!confirm(I18n.t('resetConfirm'))) return;
     if (Group.isActive()) {
       await Group.resetAll();
     } else {
@@ -277,7 +277,7 @@
   });
 
   leaveGroupBtn.addEventListener('click', () => {
-    if (!confirm('Groep verlaten? Je eigen tellingen blijven bewaard in de groep, maar je ziet de tussenstand niet meer.')) return;
+    if (!confirm(I18n.t('leaveConfirm'))) return;
     Group.leave();
     render();
   });
@@ -290,11 +290,18 @@
     url.searchParams.set('code', membership.code);
     try {
       await navigator.clipboard.writeText(url.toString());
-      copyLinkBtn.textContent = 'gekopieerd!';
-      setTimeout(() => { copyLinkBtn.textContent = 'kopieer link'; }, 1500);
+      copyLinkBtn.textContent = I18n.t('copyLinkDone');
+      setTimeout(() => { copyLinkBtn.textContent = I18n.t('copyLink'); }, 1500);
     } catch {
-      prompt('Kopieer deze link:', url.toString());
+      prompt(I18n.t('promptCopyLink'), url.toString());
     }
+  });
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      I18n.setLang(btn.dataset.lang);
+      render();
+    });
   });
 
   function prefillJoinFromUrl() {
@@ -313,6 +320,7 @@
   }
 
   Group.onChange(render);
+  I18n.applyStaticTranslations();
   prefillJoinFromUrl();
   render();
   Group.init().then(render);

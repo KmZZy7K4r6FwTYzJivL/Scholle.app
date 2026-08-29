@@ -1,10 +1,11 @@
-const CACHE_NAME = 'schorle-teller-v2';
+const CACHE_NAME = 'schorle-teller-v3';
 const ASSETS = [
   './',
   './index.html',
   './css/style.css',
   './js/app.js',
   './js/group.js',
+  './js/i18n.js',
   './js/supabase-config.js',
   './manifest.json',
   './icons/icon-192.png',

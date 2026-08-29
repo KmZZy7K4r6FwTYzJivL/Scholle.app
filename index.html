@@ -24,6 +24,36 @@
 <div class="app">
 
   <header class="header">
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button type="button" class="lang-btn" data-lang="nl">NL</button>
+      <button type="button" class="lang-btn" data-lang="en">EN</button>
+      <button type="button" class="lang-btn" data-lang="de">DE</button>
+    </div>
+
+    <div class="ferris-wheel" aria-hidden="true">
+      <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+        <path class="fw-legs" d="M76 208 L110 146 L144 208" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle class="fw-rim" cx="110" cy="110" r="90" fill="none" stroke-width="3"/>
+        <circle class="fw-hub" cx="110" cy="110" r="6"/>
+        <g class="fw-spokes" stroke-width="2">
+          <line x1="110" y1="20" x2="110" y2="200"/>
+          <line x1="20" y1="110" x2="200" y2="110"/>
+          <line x1="46" y1="46" x2="174" y2="174"/>
+          <line x1="174" y1="46" x2="46" y2="174"/>
+        </g>
+        <g class="fw-gondola">
+          <circle cx="110" cy="20" r="6"/>
+          <circle cx="110" cy="200" r="6"/>
+          <circle cx="20" cy="110" r="6"/>
+          <circle cx="200" cy="110" r="6"/>
+          <circle cx="46" cy="46" r="6"/>
+          <circle cx="174" cy="174" r="6"/>
+          <circle cx="174" cy="46" r="6"/>
+          <circle cx="46" cy="174" r="6"/>
+        </g>
+      </svg>
+    </div>
+
     <h1>🍷 Schorle Teller</h1>
     <p class="subtitle">Bad Dürkheim Wurstmarkt</p>
   </header>
@@ -39,43 +69,43 @@
     </button>
 
     <div class="secondary-actions">
-      <button id="undoBtn" class="btn-secondary">↺ Undo</button>
-      <button id="resetBtn" class="btn-secondary btn-danger">Reset</button>
+      <button id="undoBtn" class="btn-secondary" data-i18n="undo">↺ Undo</button>
+      <button id="resetBtn" class="btn-secondary btn-danger" data-i18n="reset">Reset</button>
     </div>
   </main>
 
   <section class="stats-card">
     <div class="stat">
       <span class="stat-value" id="todayCount">0</span>
-      <span class="stat-name">Vandaag</span>
+      <span class="stat-name" data-i18n="today">Vandaag</span>
     </div>
     <div class="stat">
       <span class="stat-value" id="totalCost">€0,00</span>
-      <span class="stat-name">Totaal uitgegeven</span>
+      <span class="stat-name" data-i18n="totalSpent">Totaal uitgegeven</span>
     </div>
     <div class="stat">
       <span class="stat-value" id="lastTime">–</span>
-      <span class="stat-name">Laatste</span>
+      <span class="stat-name" data-i18n="last">Laatste</span>
     </div>
   </section>
 
   <section class="group-card" id="groupCard" hidden>
     <div id="groupIntro">
-      <h2>Groep</h2>
-      <p class="group-hint">Speel samen: zie de tussenstand van je vrienden op de Wurstmarkt.</p>
+      <h2 data-i18n="groupHeading">Groep</h2>
+      <p class="group-hint" data-i18n="groupHint">Speel samen: zie de tussenstand van je vrienden op de Wurstmarkt.</p>
       <div class="group-toggle">
-        <button id="showCreateForm" class="btn-secondary">Groep aanmaken</button>
-        <button id="showJoinForm" class="btn-secondary">Groep joinen</button>
+        <button id="showCreateForm" class="btn-secondary" data-i18n="createGroupBtn">Groep aanmaken</button>
+        <button id="showJoinForm" class="btn-secondary" data-i18n="joinGroupBtn">Groep joinen</button>
       </div>
       <form id="createForm" class="group-form" hidden>
-        <input id="createGroupName" placeholder="Naam groep (bv. Wurstmarkt 2026)" required maxlength="40">
-        <input id="createYourName" placeholder="Jouw naam" required maxlength="30">
-        <button type="submit" class="btn-add btn-small">Aanmaken</button>
+        <input id="createGroupName" data-i18n-placeholder="createGroupNamePlaceholder" placeholder="Naam groep (bv. Wurstmarkt 2026)" required maxlength="40">
+        <input id="createYourName" data-i18n-placeholder="yourNamePlaceholder" placeholder="Jouw naam" required maxlength="30">
+        <button type="submit" class="btn-add btn-small" data-i18n="createSubmit">Aanmaken</button>
       </form>
       <form id="joinForm" class="group-form" hidden>
-        <input id="joinCode" placeholder="Groepscode" required maxlength="8" style="text-transform:uppercase">
-        <input id="joinYourName" placeholder="Jouw naam" required maxlength="30">
-        <button type="submit" class="btn-add btn-small">Meedoen</button>
+        <input id="joinCode" data-i18n-placeholder="joinCodePlaceholder" placeholder="Groepscode" required maxlength="8" style="text-transform:uppercase">
+        <input id="joinYourName" data-i18n-placeholder="yourNamePlaceholder" placeholder="Jouw naam" required maxlength="30">
+        <button type="submit" class="btn-add btn-small" data-i18n="joinSubmit">Meedoen</button>
       </form>
       <p id="groupError" class="group-error" hidden></p>
     </div>
@@ -84,29 +114,30 @@
       <div class="group-header">
         <div>
           <h2 id="groupName"></h2>
-          <p class="group-code">Code: <strong id="groupCode"></strong> · <button id="copyLink" class="link-btn">kopieer link</button></p>
+          <p class="group-code"><span data-i18n="codeLabel">Code:</span> <strong id="groupCode"></strong> · <button id="copyLink" class="link-btn" data-i18n="copyLink">kopieer link</button></p>
         </div>
-        <button id="leaveGroup" class="link-btn link-danger">Verlaten</button>
+        <button id="leaveGroup" class="link-btn link-danger" data-i18n="leave">Verlaten</button>
       </div>
       <ul id="standingsList" class="standings-list"></ul>
     </div>
   </section>
 
   <section class="settings-card">
-    <label for="priceInput">Prijs per Schorle (€)</label>
+    <label for="priceInput" data-i18n="priceLabel">Prijs per Schorle (€)</label>
     <input type="number" id="priceInput" min="0" step="0.10" inputmode="decimal">
   </section>
 
   <section class="history-card">
-    <h2>Geschiedenis</h2>
+    <h2 data-i18n="historyHeading">Geschiedenis</h2>
     <ul id="historyList" class="history-list"></ul>
-    <p id="emptyState" class="empty-state">Nog geen Schorles gelogd. Proost! 🥂</p>
+    <p id="emptyState" class="empty-state" data-i18n="emptyState">Nog geen Schorles gelogd. Proost! 🥂</p>
   </section>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="js/supabase-config.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/group.js"></script>
 <script src="js/app.js"></script>
 </body>
