@@ -195,10 +195,11 @@ html, body {
 }
 
 .btn-add-half {
-  flex: 0 0 76px;
-  padding: 20px 8px;
-  font-size: 1.1rem;
+  flex: 0 0 auto;
+  padding: 20px 16px;
+  font-size: 0.95rem;
   font-weight: 700;
+  white-space: nowrap;
   color: var(--wine);
   background: var(--cream);
   border: 2px solid var(--wine-light);

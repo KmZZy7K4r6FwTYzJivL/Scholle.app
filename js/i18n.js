@@ -1,6 +1,7 @@
 // Vertalingen voor de app: Nederlands, Engels, Duits.
 const I18N_STRINGS = {
   nl: {
+    addHalf: 'Wijven Schorle',
     undo: '↺ Ongedaan maken',
     reset: 'Reset',
     today: 'Vandaag',
@@ -31,6 +32,7 @@ const I18N_STRINGS = {
     promptCopyLink: 'Kopieer deze link:',
   },
   en: {
+    addHalf: '+ ½',
     undo: '↺ Undo',
     reset: 'Reset',
     today: 'Today',
@@ -61,6 +63,7 @@ const I18N_STRINGS = {
     promptCopyLink: 'Copy this link:',
   },
   de: {
+    addHalf: '+ ½',
     undo: '↺ Rückgängig',
     reset: 'Zurücksetzen',
     today: 'Heute',
