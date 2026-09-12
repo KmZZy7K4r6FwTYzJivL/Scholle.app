@@ -3,6 +3,7 @@
 
   const countEl = document.getElementById('count');
   const todayCountEl = document.getElementById('todayCount');
+  const perHourEl = document.getElementById('perHour');
   const lastTimeEl = document.getElementById('lastTime');
   const historyListEl = document.getElementById('historyList');
   const emptyStateEl = document.getElementById('emptyState');
@@ -74,6 +75,15 @@
     return new Intl.NumberFormat(I18n.locale(), { maximumFractionDigits: 1 }).format(value);
   }
 
+  function perHourRate(active) {
+    if (active.length === 0) return null;
+    const elapsedMs = Date.now() - active[0].ts;
+    // Te kort na de eerste Schorle geeft delen door een piepklein tijdsverschil
+    // een zinloos hoog getal; wacht tot er een paar minuten data is.
+    if (elapsedMs < 5 * 60000) return null;
+    return sumAmounts(active) / (elapsedMs / 3600000);
+  }
+
   function render() {
     const active = currentEntries();
     countEl.textContent = formatCount(sumAmounts(active));
@@ -81,6 +91,9 @@
     const now = new Date();
     const todayEntries = active.filter(e => isSameDay(new Date(e.ts), now));
     todayCountEl.textContent = formatCount(sumAmounts(todayEntries));
+
+    const rate = perHourRate(active);
+    perHourEl.textContent = rate === null ? '–' : formatCount(rate);
 
     const last = active[active.length - 1];
     lastTimeEl.textContent = last ? formatTime(last.ts) : '–';
@@ -313,4 +326,7 @@
   prefillJoinFromUrl();
   render();
   Group.init().then(render);
+
+  // Houdt "per uur" actueel ook zonder nieuwe tik (tijd blijft doortikken).
+  setInterval(render, 60000);
 })();
