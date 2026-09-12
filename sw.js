@@ -1,4 +1,4 @@
-const CACHE_NAME = 'schorle-teller-v4';
+const CACHE_NAME = 'schorle-teller-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -29,11 +29,22 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+
+  // Alleen onze eigen app-bestanden cachen voor offline gebruik. Alles van
+  // buiten dit origin (o.a. de Supabase-API, lettertypen, browser-extensies)
+  // gaat altijd rechtstreeks naar het netwerk — anders zou groepsdata
+  // (tellingen, tussenstand) vast blijven zitten op een verouderd antwoord.
+  if (url.origin !== self.location.origin || event.request.method !== 'GET') {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached;
       return fetch(event.request).then(response => {
-        if (response.ok && event.request.method === 'GET') {
+        if (response.ok) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         }
