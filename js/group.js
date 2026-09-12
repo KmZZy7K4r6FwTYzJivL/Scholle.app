@@ -8,7 +8,7 @@ const Group = (() => {
 
   let client = null;
   let membership = loadMembership();
-  let myEntries = []; // ms timestamps, cache
+  let myEntries = []; // cache van {ts, amount}
   let standings = [];
   let channel = null;
   let changeListeners = [];
@@ -167,11 +167,14 @@ const Group = (() => {
     if (!supabase || !membership) return;
     const { data, error } = await supabase
       .from('entries')
-      .select('created_at')
+      .select('created_at, amount')
       .eq('member_id', membership.memberId)
       .order('created_at', { ascending: true });
     if (error) throw error;
-    myEntries = (data || []).map(row => new Date(row.created_at).getTime());
+    myEntries = (data || []).map(row => ({
+      ts: new Date(row.created_at).getTime(),
+      amount: row.amount == null ? 1 : Number(row.amount),
+    }));
   }
 
   async function fetchStandings() {
@@ -186,7 +189,7 @@ const Group = (() => {
     standings = (data || []).map(row => ({
       memberId: row.member_id,
       name: row.name,
-      count: row.count,
+      count: Number(row.count),
       isMe: row.member_id === membership.memberId,
     }));
   }
@@ -195,12 +198,12 @@ const Group = (() => {
     await Promise.all([fetchMyEntries(), fetchStandings()]);
   }
 
-  async function addEntry() {
+  async function addEntry(amount = 1) {
     const supabase = getClient();
     if (!supabase || !membership) throw new Error('Niet in een groep.');
     const { error } = await supabase
       .from('entries')
-      .insert({ group_id: membership.groupId, member_id: membership.memberId });
+      .insert({ group_id: membership.groupId, member_id: membership.memberId, amount });
     if (error) throw error;
     await refresh();
   }

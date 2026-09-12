@@ -7,6 +7,7 @@
   const historyListEl = document.getElementById('historyList');
   const emptyStateEl = document.getElementById('emptyState');
   const addBtn = document.getElementById('addBtn');
+  const addHalfBtn = document.getElementById('addHalfBtn');
   const undoBtn = document.getElementById('undoBtn');
   const resetBtn = document.getElementById('resetBtn');
 
@@ -35,7 +36,9 @@
   function loadEntries() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
+      const parsed = raw ? JSON.parse(raw) : [];
+      // Oudere versie sloeg entries op als kale timestamps; migreer naar {ts, amount}.
+      return parsed.map(e => (typeof e === 'number' ? { ts: e, amount: 1 } : e));
     } catch {
       return [];
     }
@@ -63,16 +66,24 @@
     return Group.isActive() ? Group.getMyEntries() : entries;
   }
 
+  function sumAmounts(list) {
+    return list.reduce((sum, e) => sum + e.amount, 0);
+  }
+
+  function formatCount(value) {
+    return new Intl.NumberFormat(I18n.locale(), { maximumFractionDigits: 1 }).format(value);
+  }
+
   function render() {
     const active = currentEntries();
-    countEl.textContent = active.length;
+    countEl.textContent = formatCount(sumAmounts(active));
 
     const now = new Date();
-    const todayCount = active.filter(ts => isSameDay(new Date(ts), now)).length;
-    todayCountEl.textContent = todayCount;
+    const todayEntries = active.filter(e => isSameDay(new Date(e.ts), now));
+    todayCountEl.textContent = formatCount(sumAmounts(todayEntries));
 
     const last = active[active.length - 1];
-    lastTimeEl.textContent = last ? formatTime(last) : '–';
+    lastTimeEl.textContent = last ? formatTime(last.ts) : '–';
 
     renderHistory(active);
     renderGroup();
@@ -91,8 +102,8 @@
     let lastDayLabel = null;
     let indexFromStart = active.length;
 
-    ordered.forEach(ts => {
-      const dayLabel = formatDay(ts);
+    ordered.forEach(e => {
+      const dayLabel = formatDay(e.ts);
       if (dayLabel !== lastDayLabel) {
         const divider = document.createElement('li');
         divider.className = 'day-divider';
@@ -102,8 +113,9 @@
         lastDayLabel = dayLabel;
       }
 
+      const label = e.amount === 0.5 ? '½ Schorle' : 'Schorle';
       const li = document.createElement('li');
-      li.innerHTML = `<span><span class="history-index">#${indexFromStart}</span>Schorle</span><span class="history-time">${formatTime(ts)}</span>`;
+      li.innerHTML = `<span><span class="history-index">#${indexFromStart}</span>${label}</span><span class="history-time">${formatTime(e.ts)}</span>`;
       historyListEl.appendChild(li);
       indexFromStart--;
     });
@@ -136,7 +148,7 @@
       li.innerHTML = `
         <span class="standing-rank">${i + 1}</span>
         <span class="standing-name">${escapeHtml(row.name)}${row.isMe ? I18n.t('youSuffix') : ''}</span>
-        <span class="standing-count">${row.count}</span>`;
+        <span class="standing-count">${formatCount(row.count)}</span>`;
       standingsListEl.appendChild(li);
     });
   }
@@ -160,6 +172,7 @@
     if (busy) return;
     busy = true;
     addBtn.disabled = true;
+    addHalfBtn.disabled = true;
     try {
       await fn();
     } catch (e) {
@@ -168,19 +181,25 @@
     } finally {
       busy = false;
       addBtn.disabled = false;
+      addHalfBtn.disabled = false;
     }
   }
 
-  addBtn.addEventListener('click', () => withBusy(async () => {
-    if (Group.isActive()) {
-      await Group.addEntry();
-    } else {
-      entries.push(Date.now());
-      saveEntries();
-    }
-    render();
-    if (navigator.vibrate) navigator.vibrate(30);
-  }));
+  function addSchorle(amount) {
+    return withBusy(async () => {
+      if (Group.isActive()) {
+        await Group.addEntry(amount);
+      } else {
+        entries.push({ ts: Date.now(), amount });
+        saveEntries();
+      }
+      render();
+      if (navigator.vibrate) navigator.vibrate(30);
+    });
+  }
+
+  addBtn.addEventListener('click', () => addSchorle(1));
+  addHalfBtn.addEventListener('click', () => addSchorle(0.5));
 
   undoBtn.addEventListener('click', () => withBusy(async () => {
     if (currentEntries().length === 0) return;

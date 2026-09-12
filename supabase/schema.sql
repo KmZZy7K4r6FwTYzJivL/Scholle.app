@@ -21,20 +21,24 @@ create table if not exists entries (
   id uuid primary key default gen_random_uuid(),
   group_id uuid not null references groups(id) on delete cascade,
   member_id uuid not null references members(id) on delete cascade,
+  amount numeric not null default 1,
   created_at timestamptz not null default now()
 );
+
+-- Migratie voor wie deze schema.sql al eerder draaide vóór de halve-Schorle-optie:
+alter table entries add column if not exists amount numeric not null default 1;
 
 create index if not exists entries_group_id_idx on entries(group_id);
 create index if not exists entries_member_id_idx on entries(member_id);
 create index if not exists members_group_id_idx on members(group_id);
 
--- Tussenstand per groep: aantal Schorles per lid.
+-- Tussenstand per groep: som van alle gelogde hoeveelheden (hele en halve Schorles) per lid.
 create or replace view group_standings as
 select
   m.group_id,
   m.id as member_id,
   m.name,
-  count(e.id) as count,
+  coalesce(sum(e.amount), 0) as count,
   max(e.created_at) as last_at
 from members m
 left join entries e on e.member_id = m.id
@@ -74,5 +78,20 @@ create policy "anyone can remove an entry" on entries for delete using (true);
 grant select on group_standings to anon, authenticated;
 
 -- Realtime: laat live updates toe zodra iemand een Schorle logt of een groep joint.
-alter publication supabase_realtime add table entries;
-alter publication supabase_realtime add table members;
+-- (veilig om opnieuw te draaien: slaat over als de tabel al is toegevoegd)
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'entries'
+  ) then
+    alter publication supabase_realtime add table entries;
+  end if;
+
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'members'
+  ) then
+    alter publication supabase_realtime add table members;
+  end if;
+end $$;

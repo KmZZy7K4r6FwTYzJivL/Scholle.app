@@ -183,6 +183,35 @@ html, body {
   transform: scale(0.96);
 }
 
+.add-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.add-row .btn-add {
+  flex: 1;
+  width: auto;
+}
+
+.btn-add-half {
+  flex: 0 0 76px;
+  padding: 20px 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--wine);
+  background: var(--cream);
+  border: 2px solid var(--wine-light);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.08s ease;
+  touch-action: manipulation;
+}
+
+.btn-add-half:active {
+  transform: scale(0.96);
+}
+
 .secondary-actions {
   display: flex;
   gap: 10px;

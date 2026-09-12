@@ -4,7 +4,7 @@ Een simpele, mobielvriendelijke web-app om bij te houden hoeveel Schorles je dri
 
 ## Features
 
-- Eén grote knop om een Schorle te loggen (met timestamp)
+- Eén grote knop om een Schorle te loggen (met timestamp), plus een knop voor een halve Schorle
 - Undo en reset
 - Overzicht: totaal, aantal vandaag, laatste Schorle
 - Geschiedenis gegroepeerd per dag

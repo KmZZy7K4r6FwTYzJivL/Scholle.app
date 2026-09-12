@@ -1,4 +1,4 @@
-const CACHE_NAME = 'schorle-teller-v3';
+const CACHE_NAME = 'schorle-teller-v4';
 const ASSETS = [
   './',
   './index.html',
