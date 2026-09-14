@@ -9,6 +9,7 @@
   const emptyStateEl = document.getElementById('emptyState');
   const addBtn = document.getElementById('addBtn');
   const addHalfBtn = document.getElementById('addHalfBtn');
+  const addZeroBtn = document.getElementById('addZeroBtn');
   const undoBtn = document.getElementById('undoBtn');
   const resetBtn = document.getElementById('resetBtn');
 
@@ -126,7 +127,7 @@
         lastDayLabel = dayLabel;
       }
 
-      const label = e.amount === 0.5 ? '½ Schorle' : 'Schorle';
+      const label = e.amount === 0 ? I18n.t('zeroHistory') : e.amount === 0.5 ? '½ Schorle' : 'Schorle';
       const li = document.createElement('li');
       li.innerHTML = `<span><span class="history-index">#${indexFromStart}</span>${label}</span><span class="history-time">${formatTime(e.ts)}</span>`;
       historyListEl.appendChild(li);
@@ -186,6 +187,7 @@
     busy = true;
     addBtn.disabled = true;
     addHalfBtn.disabled = true;
+    addZeroBtn.disabled = true;
     try {
       await fn();
     } catch (e) {
@@ -195,6 +197,7 @@
       busy = false;
       addBtn.disabled = false;
       addHalfBtn.disabled = false;
+      addZeroBtn.disabled = false;
     }
   }
 
@@ -213,6 +216,7 @@
 
   addBtn.addEventListener('click', () => addSchorle(1));
   addHalfBtn.addEventListener('click', () => addSchorle(0.5));
+  addZeroBtn.addEventListener('click', () => addSchorle(0));
 
   undoBtn.addEventListener('click', () => withBusy(async () => {
     if (currentEntries().length === 0) return;

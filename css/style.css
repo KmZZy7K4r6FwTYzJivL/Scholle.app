@@ -213,6 +213,26 @@ html, body {
   transform: scale(0.96);
 }
 
+.btn-add-zero {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border: 1.5px dashed #d8c7b2;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.08s ease;
+  touch-action: manipulation;
+}
+
+.btn-add-zero:active {
+  transform: scale(0.97);
+}
+
 .secondary-actions {
   display: flex;
   gap: 10px;
