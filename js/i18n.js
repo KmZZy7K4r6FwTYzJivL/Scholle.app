@@ -2,7 +2,7 @@
 const I18N_STRINGS = {
   nl: {
     addHalf: 'Wijven Schorle',
-    zeroButton: '0,0 Schorle',
+    zeroButton: '0.0 Schorle',
     zeroHistory: 'Alcoholvrije Schorle',
     undo: '↺ Ongedaan maken',
     reset: 'Reset',
@@ -68,7 +68,7 @@ const I18N_STRINGS = {
   },
   de: {
     addHalf: '+ ½',
-    zeroButton: '0,0 Schorle',
+    zeroButton: '0.0 Schorle',
     zeroHistory: 'Alkoholfreie Schorle',
     undo: '↺ Rückgängig',
     reset: 'Zurücksetzen',
