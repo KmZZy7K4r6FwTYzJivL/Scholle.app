@@ -11,6 +11,7 @@ Een simpele, mobielvriendelijke web-app om bij te houden hoeveel Schorles je dri
 - Werkt volledig offline (PWA) en is te installeren op het beginscherm van zowel **Android** als **iOS**
 - Solo-gebruik werkt zonder backend of account — alles lokaal op je telefoon (`localStorage`)
 - **Groepen:** maak een groep aan, deel de code of link, en zie de live tussenstand van iedereen die meedoet (vereist eenmalige Supabase-koppeling, zie hieronder)
+- **Statistieken** (`stats.html`, via de knop "📊 Statistieken"): je eigen cijfers (totaal, gemiddelde per dag, beste dag, piekuur, halve en 0.0-Schorles, grafieken per uur en per dag), plus met Supabase ook een groepsklassement en cijfers over alle gebruikers samen
 - **Meertalig:** Nederlands, Engels en Duits, te wisselen met de NL/EN/DE-knoppen rechtsboven (onthoudt je keuze, start standaard op de taal van je telefoon)
 
 ## Gebruiken
@@ -43,6 +44,8 @@ Groepen hebben een gedeelde database nodig zodat de tussenstand voor iedereen zi
    window.SCHORLE_SUPABASE_ANON_KEY = 'eyJ...';
    ```
 5. Herlaad de app — de sectie "Groep" verschijnt nu boven de instellingen, met de knoppen "Groep aanmaken" en "Groep joinen".
+
+**Statistieken-backend:** `schema.sql` maakt ook de database-functies `group_stats()` en `global_stats()` aan, die de statistiekenpagina aanroept. Had je `schema.sql` al eerder gedraaid? Draai 'm dan nog één keer opnieuw (veilig, er gaat niets verloren) om deze functies toe te voegen.
 
 **Hoe het werkt:** wie een groep aanmaakt krijgt een korte code (en een deelbare link). Anderen vullen alleen hun naam in om mee te doen — geen wachtwoord. De "+ Schorle"-knop telt dan mee in de groep, en de tussenstand van alle leden wordt live bijgewerkt zodra iemand drinkt. Zonder Supabase-configuratie blijft de app gewoon solo werken zoals hierboven beschreven.
 

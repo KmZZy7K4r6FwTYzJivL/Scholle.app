@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Schorle Statistieken</title>
+<meta name="description" content="Statistieken van je Schorles op de Bad Dürkheim Wurstmarkt">
+<meta name="theme-color" content="#7a1f2b">
+
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Schorle">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <header class="header header-compact">
+    <a href="index.html" class="back-link" data-i18n="backToCounter">← Teller</a>
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button type="button" class="lang-btn" data-lang="nl">NL</button>
+      <button type="button" class="lang-btn" data-lang="en">EN</button>
+      <button type="button" class="lang-btn" data-lang="de">DE</button>
+    </div>
+    <h1 data-i18n="statsTitle">📊 Statistieken</h1>
+    <p class="subtitle">Bad Dürkheim Wurstmarkt</p>
+  </header>
+
+  <section class="stats-section">
+    <h2 data-i18n="statsYou">Jij</h2>
+    <div id="youContent"></div>
+  </section>
+
+  <section class="stats-section" id="groupSection" hidden>
+    <h2 id="groupTitle"></h2>
+    <div id="groupContent"></div>
+  </section>
+
+  <section class="stats-section" id="globalSection" hidden>
+    <h2 data-i18n="statsEveryone">Alle gebruikers</h2>
+    <div id="globalContent"></div>
+  </section>
+
+</div>
+
+<div id="chartTooltip" class="chart-tooltip" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/group.js"></script>
+<script src="js/stats.js"></script>
+</body>
+</html>
