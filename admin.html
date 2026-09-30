@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Schorle Beheer</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#7a1f2b">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app app-wide">
+
+  <header class="header header-compact">
+    <a href="index.html" class="back-link">← Teller</a>
+    <h1>🔧 Beheer</h1>
+    <p class="subtitle">Overall statistieken van Schorle Teller</p>
+  </header>
+
+  <section class="stats-section" id="loginSection" hidden>
+    <h2>Inloggen</h2>
+    <form id="loginForm" class="group-form">
+      <input id="password" type="password" placeholder="Beheerwachtwoord" autocomplete="current-password" required>
+      <button type="submit" class="btn-add btn-small">Bekijken</button>
+    </form>
+    <p id="loginError" class="group-error" hidden></p>
+  </section>
+
+  <div id="dashboard" hidden>
+    <div class="admin-toolbar">
+      <span id="updatedAt" class="muted"></span>
+      <span>
+        <button id="refreshBtn" class="link-btn">vernieuwen</button> ·
+        <button id="logoutBtn" class="link-btn link-danger">uitloggen</button>
+      </span>
+    </div>
+
+    <section class="stats-section">
+      <h2>Totaal</h2>
+      <div id="totals"></div>
+      <p class="admin-note">Gebruikers = mensen die in een groep zitten. Wie de app alleen solo gebruikt, slaat alles op de eigen telefoon op en wordt hier niet geteld.</p>
+    </section>
+
+    <section class="stats-section">
+      <h2>Vandaag</h2>
+      <div id="today"></div>
+    </section>
+
+    <section class="stats-section">
+      <h2>Verloop</h2>
+      <div id="trends"></div>
+    </section>
+
+    <section class="stats-section">
+      <h2>Top 10 drinkers</h2>
+      <div id="topMembers"></div>
+    </section>
+
+    <section class="stats-section">
+      <h2 id="groupsHeading">Alle groepen</h2>
+      <input id="groupFilter" class="admin-filter" type="search" placeholder="Zoek op naam of code">
+      <div id="groupList"></div>
+    </section>
+  </div>
+
+</div>
+
+<div id="chartTooltip" class="chart-tooltip" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

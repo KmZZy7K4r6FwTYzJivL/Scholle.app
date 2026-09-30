@@ -47,6 +47,14 @@ Groepen hebben een gedeelde database nodig zodat de tussenstand voor iedereen zi
 
 **Statistieken-backend:** `schema.sql` maakt ook de database-functies `group_stats()` en `global_stats()` aan, die de statistiekenpagina aanroept. Had je `schema.sql` al eerder gedraaid? Draai 'm dan nog één keer opnieuw (veilig, er gaat niets verloren) om deze functies toe te voegen.
 
+**Beheer (overall statistieken):** op `admin.html` (bv. `https://schorleteller.de/admin.html`) zie je hoeveel groepen en gebruikers er zijn, activiteit per dag, de top-drinkers en alle groepen met hun code. Die pagina is beveiligd met een wachtwoord dat je zelf instelt in de SQL Editor:
+
+```sql
+insert into admin_settings (id, password_hash)
+values (1, crypt('JOUW-WACHTWOORD', gen_salt('bf')))
+on conflict (id) do update set password_hash = excluded.password_hash;
+```
+
 **Hoe het werkt:** wie een groep aanmaakt krijgt een korte code (en een deelbare link). Anderen vullen alleen hun naam in om mee te doen — geen wachtwoord. De "+ Schorle"-knop telt dan mee in de groep, en de tussenstand van alle leden wordt live bijgewerkt zodra iemand drinkt. Zonder Supabase-configuratie blijft de app gewoon solo werken zoals hierboven beschreven.
 
 > **Let op:** er is bewust geen inlogsysteem, dus de groepscode is de enige toegangsdrempel — deel 'm alleen met mensen die je vertrouwt. Groepsfuncties vereisen internetverbinding; solo-tellen blijft offline werken.
