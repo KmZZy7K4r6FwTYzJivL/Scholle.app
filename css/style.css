@@ -709,3 +709,47 @@ html, body {
   pointer-events: none;
   white-space: nowrap;
 }
+
+/* --- Beheer --- */
+
+.app-wide {
+  max-width: 720px;
+}
+
+.admin-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding: 0 4px;
+  font-size: 0.85rem;
+}
+
+.admin-note {
+  margin: 12px 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.admin-filter {
+  width: 100%;
+  margin-bottom: 4px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  border: 1px solid #e7d9c9;
+  border-radius: 10px;
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.06em;
+  color: var(--wine);
+}
+
+.admin-toolbar,
+.admin-toolbar .muted,
+.admin-toolbar .link-btn {
+  color: rgba(255, 255, 255, 0.9);
+}

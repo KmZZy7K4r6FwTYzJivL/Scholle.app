@@ -230,3 +230,128 @@ $$;
 grant execute on function schorle_tz(text) to anon, authenticated;
 grant execute on function group_stats(uuid, text) to anon, authenticated;
 grant execute on function global_stats(text) to anon, authenticated;
+
+-- ---------------------------------------------------------------------------
+-- Beheer-statistieken (voor admin.html)
+-- ---------------------------------------------------------------------------
+-- Overzicht over de hele app voor de eigenaar: aantal groepen, gebruikers,
+-- activiteit, alle groepen met hun code. Beveiligd met een wachtwoord dat
+-- alleen als hash in admin_settings staat. Die tabel heeft RLS aan zonder
+-- policies, dus met de publieke anon-key is hij niet te lezen; alleen de
+-- functie admin_stats() (security definer) mag erin kijken.
+--
+-- Wachtwoord instellen of wijzigen (vervang JOUW-WACHTWOORD en draai dit los
+-- in de SQL Editor):
+--
+--   insert into admin_settings (id, password_hash)
+--   values (1, crypt('JOUW-WACHTWOORD', gen_salt('bf')))
+--   on conflict (id) do update set password_hash = excluded.password_hash;
+
+create table if not exists admin_settings (
+  id int primary key default 1 check (id = 1),
+  password_hash text not null
+);
+
+alter table admin_settings enable row level security;
+revoke all on admin_settings from anon, authenticated;
+
+create or replace function admin_stats(p_password text, p_tz text default 'Europe/Berlin')
+returns json
+language plpgsql
+volatile
+security definer
+set search_path = public, extensions
+as $$
+declare
+  tz text := schorle_tz(p_tz);
+  today date := (now() at time zone tz)::date;
+  stored text;
+  result json;
+begin
+  select password_hash into stored from admin_settings where id = 1;
+  if stored is null or crypt(coalesce(p_password, ''), stored) <> stored then
+    perform pg_sleep(1); -- remt het raden van wachtwoorden af
+    raise exception 'Onjuist wachtwoord' using errcode = '28P01';
+  end if;
+
+  with
+  group_totals as (
+    select
+      g.id, g.name, g.code, g.created_at,
+      (select count(*) from members m where m.group_id = g.id) as members,
+      coalesce((select sum(amount) from entries e where e.group_id = g.id), 0) as total,
+      (select max(created_at) from entries e where e.group_id = g.id) as last_at
+    from groups g
+  ),
+  -- Elke dag van de eerste activiteit t/m vandaag, ook dagen zonder activiteit,
+  -- zodat de grafieken geen gaten overslaan.
+  first_day as (
+    select least(
+      (select min(created_at) from groups),
+      (select min(created_at) from members),
+      (select min(created_at) from entries)
+    ) at time zone tz as ts
+  ),
+  days as (
+    select generate_series(ts::date, today, interval '1 day')::date as day
+    from first_day
+    where ts is not null
+  )
+  select json_build_object(
+    'groups', (select count(*) from groups),
+    'members', (select count(*) from members),
+    'drinks', (select count(*) from entries),
+    'total', coalesce((select sum(amount) from entries), 0),
+    'halves', (select count(*) from entries where amount = 0.5),
+    'alcohol_free', (select count(*) from entries where amount = 0),
+    'empty_groups', (select count(*) from group_totals where total = 0 and members <= 1),
+    'members_without_entries', (
+      select count(*) from members m where not exists (select 1 from entries e where e.member_id = m.id)
+    ),
+    'today', json_build_object(
+      'total', coalesce((select sum(amount) from entries where (created_at at time zone tz)::date = today), 0),
+      'active_members', (select count(distinct member_id) from entries where (created_at at time zone tz)::date = today),
+      'new_groups', (select count(*) from groups where (created_at at time zone tz)::date = today),
+      'new_members', (select count(*) from members where (created_at at time zone tz)::date = today)
+    ),
+    'active_24h', (select count(distinct member_id) from entries where created_at > now() - interval '24 hours'),
+    'by_day', (
+      select coalesce(json_agg(json_build_object(
+        'day', d.day,
+        'total', coalesce((select sum(amount) from entries where (created_at at time zone tz)::date = d.day), 0),
+        'new_groups', (select count(*) from groups where (created_at at time zone tz)::date = d.day),
+        'new_members', (select count(*) from members where (created_at at time zone tz)::date = d.day),
+        'active_members', (select count(distinct member_id) from entries where (created_at at time zone tz)::date = d.day)
+      ) order by d.day), '[]'::json)
+      from days d
+    ),
+    'by_hour', (
+      select coalesce(json_agg(json_build_object('hour', h, 'total', t) order by h), '[]'::json)
+      from (
+        select extract(hour from created_at at time zone tz)::int as h, sum(amount) as t
+        from entries group by 1
+      ) s
+    ),
+    'group_list', (
+      select coalesce(json_agg(row_to_json(g) order by g.created_at desc), '[]'::json)
+      from (select * from group_totals order by created_at desc limit 500) g
+    ),
+    'top_members', (
+      select coalesce(json_agg(row_to_json(t) order by t.total desc), '[]'::json)
+      from (
+        select m.name, g.name as group_name, sum(e.amount) as total
+        from entries e
+        join members m on m.id = e.member_id
+        join groups g on g.id = e.group_id
+        group by m.id, m.name, g.name
+        order by total desc
+        limit 10
+      ) t
+    )
+  ) into result;
+  return result;
+end;
+$$;
+
+revoke execute on function admin_stats(text, text) from public;
+grant execute on function admin_stats(text, text) to anon, authenticated;

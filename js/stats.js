@@ -46,23 +46,10 @@
     return new Date(ts).toLocaleString(I18n.locale(), { weekday: 'short', hour: '2-digit', minute: '2-digit' });
   }
 
-  function formatHour(h) {
-    return `${String(h).padStart(2, '0')}:00`;
-  }
-
-  function parseDay(str) {
-    const [y, m, d] = str.split('-').map(Number);
-    return new Date(y, m - 1, d);
-  }
+  const { formatHour, parseDay } = Charts;
 
   function dayKey(date) {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-  }
-
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
   }
 
   function maxBy(list, key) {
@@ -92,66 +79,18 @@
 
   // --- Bouwstenen ---
 
-  function tiles(items) {
-    return `<div class="stat-tiles">${items.map(([value, label]) => `
-      <div class="stat-tile">
-        <span class="stat-value">${value}</span>
-        <span class="stat-name">${escapeHtml(label)}</span>
-      </div>`).join('')}</div>`;
-  }
+  const { escapeHtml, tiles } = Charts;
 
-  // Staafdiagram met één reeks. bars: [{label, value, tick}] waarbij tick het
-  // (optionele) label onder de as is.
   function barChart(title, bars) {
-    const max = Math.max(...bars.map(b => b.value), 0);
-    const cols = bars.map(b => {
-      const pct = max > 0 ? (b.value / max) * 100 : 0;
-      const tip = `${b.label} · ${formatCount(b.value)} Schorle`;
-      return `
-        <div class="bar-col" data-tip="${escapeHtml(tip)}" role="img" aria-label="${escapeHtml(tip)}">
-          <div class="bar-track"><div class="bar" style="height:${pct}%"></div></div>
-          <span class="bar-tick">${b.tick ? escapeHtml(b.tick) : ''}</span>
-        </div>`;
-    }).join('');
-    return `
-      <figure class="chart">
-        <figcaption>${escapeHtml(title)}</figcaption>
-        <div class="bar-chart">${cols}</div>
-      </figure>`;
+    return Charts.barChart(title, bars, v => `${formatCount(v)} Schorle`);
   }
-
-  // De Wurstmarkt-dag loopt door na middernacht, dus de uren tellen vanaf
-  // 06:00 (06, 07, … 23, 00, … 05) zodat 00:00 na 23:00 komt.
-  const DAY_START_HOUR = 6;
 
   function hourChart(byHour) {
-    const totals = new Map(byHour.map(r => [Number(r.hour), Number(r.total)]));
-    const order = Array.from({ length: 24 }, (_, i) => (DAY_START_HOUR + i) % 24);
-    // Alleen het deel van de dag waarin gedronken is (plus een uur marge),
-    // anders staan er vooral lege uren in beeld.
-    const used = order.map((h, i) => (totals.has(h) ? i : -1)).filter(i => i >= 0);
-    const from = Math.max(0, Math.min(...used) - 1);
-    const to = Math.min(23, Math.max(...used) + 1);
-    const bars = order.slice(from, to + 1).map(h => ({
-      label: formatHour(h),
-      value: totals.get(h) || 0,
-      tick: h % 3 === 0 ? String(h) : '',
-    }));
-    return barChart(I18n.t('chartByHour'), bars);
+    return barChart(I18n.t('chartByHour'), Charts.hourBars(byHour));
   }
 
   function dayChart(byDay) {
-    const recent = byDay.slice(-14);
-    const every = recent.length > 7 ? 2 : 1;
-    const bars = recent.map((r, i) => {
-      const date = parseDay(r.day);
-      return {
-        label: formatDayShort(date),
-        value: Number(r.total),
-        tick: (recent.length - 1 - i) % every === 0 ? String(date.getDate()) : '',
-      };
-    });
-    return barChart(I18n.t('chartByDay'), bars);
+    return barChart(I18n.t('chartByDay'), Charts.dayBars(byDay, 'total', I18n.locale(), 14));
   }
 
   function highlights(stats) {
@@ -324,33 +263,7 @@
     render();
   }
 
-  // --- Tooltip (hover op desktop, tik op mobiel) ---
-
-  function showTip(col) {
-    tooltipEl.textContent = col.dataset.tip;
-    tooltipEl.hidden = false;
-    const rect = col.getBoundingClientRect();
-    const tipRect = tooltipEl.getBoundingClientRect();
-    const left = Math.min(Math.max(8, rect.left + rect.width / 2 - tipRect.width / 2), window.innerWidth - tipRect.width - 8);
-    tooltipEl.style.left = `${left}px`;
-    tooltipEl.style.top = `${rect.top + window.scrollY - tipRect.height - 6}px`;
-  }
-
-  document.addEventListener('pointerover', e => {
-    const col = e.target.closest && e.target.closest('.bar-col');
-    if (col) showTip(col); else tooltipEl.hidden = true;
-  });
-  document.addEventListener('click', e => {
-    const col = e.target.closest && e.target.closest('.bar-col');
-    if (col) showTip(col); else tooltipEl.hidden = true;
-  });
-
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      I18n.setLang(btn.dataset.lang);
-      render();
-    });
-  });
+  Charts.enableTooltips(tooltipEl);
 
   if ('serviceWorker' in navigator) {
     // Zodra een nieuwe versie van de app (service worker) het overneemt, één
