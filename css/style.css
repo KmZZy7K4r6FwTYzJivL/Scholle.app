@@ -493,3 +493,219 @@ html, body {
 .standing-me .standing-name {
   font-weight: 700;
 }
+
+/* --- Statistieken --- */
+
+.stats-link {
+  display: block;
+  margin-top: 12px;
+  padding: 12px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--wine-dark);
+  background: var(--card-bg);
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(90, 22, 32, 0.08);
+}
+
+.header-compact {
+  padding-top: 40px;
+}
+
+.back-link {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  padding: 4px 0;
+}
+
+.stats-section {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  margin-top: 16px;
+  padding: 16px 18px;
+  box-shadow: 0 4px 16px rgba(90, 22, 32, 0.08);
+}
+
+.stats-section h2 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  color: var(--wine-dark);
+}
+
+.stats-section h3 {
+  margin: 18px 0 4px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 8px;
+}
+
+.stat-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 10px 4px;
+  background: var(--cream);
+  border-radius: 10px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.awards {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.awards li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 0;
+}
+
+.awards strong {
+  color: var(--wine);
+  text-align: right;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  margin-top: 10px;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.stats-table th {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: left;
+  padding: 6px 4px;
+  border-bottom: 1px solid #f0e6d9;
+}
+
+.stats-table td {
+  padding: 8px 4px;
+  border-bottom: 1px solid #f0e6d9;
+}
+
+.stats-table tr:last-child td {
+  border-bottom: none;
+}
+
+.stats-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.stats-table .strong {
+  font-weight: 700;
+  color: var(--wine);
+}
+
+.stats-table tr.standing-me td {
+  background: #fdf3e7;
+  font-weight: 600;
+}
+
+.chart {
+  margin: 18px 0 0;
+}
+
+.chart figcaption {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.bar-chart {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 2px;
+  height: 120px;
+  border-bottom: 1px solid #e7d9c9;
+}
+
+.bar-col {
+  flex: 1;
+  min-width: 0;
+  max-width: 40px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.bar-track {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+}
+
+.bar {
+  width: 100%;
+  min-height: 0;
+  background: var(--wine-light);
+  border-radius: 4px 4px 0 0;
+}
+
+.bar-col:hover .bar {
+  background: var(--wine);
+}
+
+.bar-tick {
+  height: 0;
+  position: relative;
+  top: 4px;
+  font-size: 0.65rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+.chart .bar-chart {
+  margin-bottom: 16px;
+}
+
+.chart-tooltip {
+  position: absolute;
+  z-index: 10;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--ink);
+  border-radius: 8px;
+  pointer-events: none;
+  white-space: nowrap;
+}

@@ -95,3 +95,138 @@ begin
     alter publication supabase_realtime add table members;
   end if;
 end $$;
+
+-- ---------------------------------------------------------------------------
+-- Statistieken (voor stats.html)
+-- ---------------------------------------------------------------------------
+-- Twee functies die de app via supabase.rpc() aanroept. Ze rekenen alles in de
+-- database uit en geven één JSON-object terug, zodat de statistiekenpagina met
+-- één request toe kan. Tijden worden gegroepeerd in de tijdzone van de telefoon
+-- (p_tz); een onbekende tijdzone valt terug op Europe/Berlin (Wurstmarkt-tijd).
+-- Ze draaien als "security invoker", dus dezelfde RLS-regels als hierboven gelden.
+
+create or replace function schorle_tz(p_tz text)
+returns text
+language sql
+stable
+as $$
+  select coalesce((select name from pg_timezone_names where name = p_tz limit 1), 'Europe/Berlin');
+$$;
+
+-- Statistieken van één groep: totalen, verdeling per uur/dag en cijfers per lid.
+create or replace function group_stats(p_group_id uuid, p_tz text default 'Europe/Berlin')
+returns json
+language plpgsql
+stable
+as $$
+declare
+  tz text := schorle_tz(p_tz);
+  result json;
+begin
+  with e as (
+    select amount, created_at, member_id
+    from entries
+    where group_id = p_group_id
+  ),
+  per_member as (
+    select
+      m.id as member_id,
+      m.name,
+      coalesce(sum(x.amount), 0) as total,
+      count(x.created_at) as drinks,
+      count(*) filter (where x.amount = 0.5) as halves,
+      count(*) filter (where x.amount = 0) as alcohol_free,
+      min(x.created_at) as first_at,
+      max(x.created_at) as last_at
+    from members m
+    left join e x on x.member_id = m.id
+    where m.group_id = p_group_id
+    group by m.id, m.name
+  )
+  select json_build_object(
+    'total', coalesce((select sum(amount) from e), 0),
+    'drinks', (select count(*) from e),
+    'halves', (select count(*) from e where amount = 0.5),
+    'alcohol_free', (select count(*) from e where amount = 0),
+    'members', (select count(*) from per_member),
+    'first_at', (select min(created_at) from e),
+    'last_at', (select max(created_at) from e),
+    'by_hour', (
+      select coalesce(json_agg(json_build_object('hour', h, 'total', t) order by h), '[]'::json)
+      from (
+        select extract(hour from created_at at time zone tz)::int as h, sum(amount) as t
+        from e group by 1
+      ) s
+    ),
+    'by_day', (
+      select coalesce(json_agg(json_build_object('day', d, 'total', t) order by d), '[]'::json)
+      from (
+        select (created_at at time zone tz)::date as d, sum(amount) as t
+        from e group by 1
+      ) s
+    ),
+    'per_member', (
+      select coalesce(json_agg(row_to_json(pm) order by pm.total desc, pm.name), '[]'::json)
+      from per_member pm
+    )
+  ) into result;
+  return result;
+end;
+$$;
+
+-- Statistieken over alle gebruikers samen. Bevat bewust geen groepscodes of
+-- namen van leden, alleen aantallen en de namen van de drukste groepen.
+create or replace function global_stats(p_tz text default 'Europe/Berlin')
+returns json
+language plpgsql
+stable
+as $$
+declare
+  tz text := schorle_tz(p_tz);
+  today date := (now() at time zone tz)::date;
+  result json;
+begin
+  select json_build_object(
+    'total', coalesce((select sum(amount) from entries), 0),
+    'drinks', (select count(*) from entries),
+    'halves', (select count(*) from entries where amount = 0.5),
+    'alcohol_free', (select count(*) from entries where amount = 0),
+    'groups', (select count(*) from groups),
+    'members', (select count(*) from members),
+    'today', coalesce((
+      select sum(amount) from entries where (created_at at time zone tz)::date = today
+    ), 0),
+    'by_hour', (
+      select coalesce(json_agg(json_build_object('hour', h, 'total', t) order by h), '[]'::json)
+      from (
+        select extract(hour from created_at at time zone tz)::int as h, sum(amount) as t
+        from entries group by 1
+      ) s
+    ),
+    'by_day', (
+      select coalesce(json_agg(json_build_object('day', d, 'total', t) order by d), '[]'::json)
+      from (
+        select (created_at at time zone tz)::date as d, sum(amount) as t
+        from entries group by 1
+      ) s
+    ),
+    'top_groups', (
+      select coalesce(json_agg(row_to_json(g) order by g.total desc), '[]'::json)
+      from (
+        select gr.name, count(distinct m.id) as members, coalesce(sum(en.amount), 0) as total
+        from groups gr
+        left join members m on m.group_id = gr.id
+        left join entries en on en.member_id = m.id
+        group by gr.id, gr.name
+        order by total desc
+        limit 5
+      ) g
+    )
+  ) into result;
+  return result;
+end;
+$$;
+
+grant execute on function schorle_tz(text) to anon, authenticated;
+grant execute on function group_stats(uuid, text) to anon, authenticated;
+grant execute on function global_stats(text) to anon, authenticated;

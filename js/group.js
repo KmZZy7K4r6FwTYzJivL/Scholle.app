@@ -268,6 +268,7 @@ const Group = (() => {
   return {
     isConfigured,
     isActive,
+    getClient,
     create,
     join,
     leave,
