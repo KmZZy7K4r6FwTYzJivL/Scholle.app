@@ -320,6 +320,15 @@
   }
 
   if ('serviceWorker' in navigator) {
+    // Zodra een nieuwe versie van de app (service worker) het overneemt, één
+    // keer herladen zodat oude en nieuwe bestanden niet door elkaar lopen.
+    const hadController = !!navigator.serviceWorker.controller;
+    let reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController || reloading) return;
+      reloading = true;
+      window.location.reload();
+    });
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('sw.js').catch(() => {});
     });

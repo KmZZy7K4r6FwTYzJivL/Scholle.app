@@ -298,9 +298,9 @@
   }
 
   async function loadGlobalStats() {
-    const client = Group.isConfigured() && Group.getClient();
-    if (!client) return;
+    if (!Group.isConfigured()) return;
     try {
+      const client = Group.getClient();
       const { data, error } = await client.rpc('global_stats', { p_tz: timeZone });
       if (error) throw error;
       globalStats = data;
@@ -351,6 +351,21 @@
       render();
     });
   });
+
+  if ('serviceWorker' in navigator) {
+    // Zodra een nieuwe versie van de app (service worker) het overneemt, één
+    // keer herladen zodat oude en nieuwe bestanden niet door elkaar lopen.
+    const hadController = !!navigator.serviceWorker.controller;
+    let reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController || reloading) return;
+      reloading = true;
+      window.location.reload();
+    });
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
 
   I18n.applyStaticTranslations();
   render();
